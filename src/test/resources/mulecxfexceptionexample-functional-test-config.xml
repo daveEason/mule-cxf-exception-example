@@ -34,7 +34,7 @@
 
         <!-- Testing with local Service -->
         <http:outbound-endpoint host="localhost" port="8088" path="mockStockQuoteSoap" method="POST" exchange-pattern="request-response">
-            <cxf:jaxws-client clientClass="net.webservicex.StockQuote" operation="GetQuote" port="StockQuoteSoap" wsdlLocation="http://localhost:8088/mockStockQuoteSoap?wsdl"/>
+            <cxf:jaxws-client clientClass="net.webservicex.StockQuote" operation="GetQuote" port="StockQuoteSoap" wsdlLocation="http://localhost:8088/mockStockQuoteSoap?wsdl" enableMuleSoapHeaders="false"/>
         </http:outbound-endpoint>
 
         <logger level="DEBUG" message="Payload after CXF invocation is: #[payload:]"/>
