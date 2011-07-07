@@ -16,8 +16,10 @@
         <!-- Tools properties -->
         <eclipsePluginVersion>2.5</eclipsePluginVersion>
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
-        <jdk5Name>J2SE-1.5</jdk5Name>
-        <jdk.version>1.5</jdk.version>
+        <jdkName>J2SE-1.6</jdkName>
+        <jdk.version>1.6</jdk.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <build>
@@ -74,7 +76,7 @@
                     <!-- by default download all sources when generating project files -->
                     <downloadSources>true</downloadSources>
                     <classpathContainers>
-                        <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/${vmtype}/${jdk5Name}
+                        <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/${vmtype}/${jdkName}
                         </classpathContainer>
                     </classpathContainers>
                 </configuration>
@@ -161,7 +163,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+                <groupId>maven</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <targetJdk>${jdk.version}</targetJdk>
@@ -185,7 +187,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+                <groupId>maven</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
             </plugin>
             <plugin>
@@ -196,6 +198,7 @@
                         <link>http://java.sun.com/j2ee/1.4/docs/api</link>
                         <link>http://java.sun.com/j2se/1.4.2/docs/api</link>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+                        <link>http://java.sun.com/j2se/6/docs/api</link>
                     </links>
                 </configuration>
             </plugin>
@@ -284,6 +287,38 @@
             <artifactId>junit</artifactId>
             <version>4.8.1</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Report dependencies -->
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>2.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>maven</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>taglist-maven-plugin</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>maven</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>1.4.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jdepend-maven-plugin</artifactId>
+            <version>2.0-beta-2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>2.3.1</version>
         </dependency>
     </dependencies>
 
