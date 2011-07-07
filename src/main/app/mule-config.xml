@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.1/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/3.1/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/3.1/mule-vm.xsd
+        http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/3.1/mule-cxf.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <description>Simple Mule application to illustrate exception handling strategies</description>
+
+    <spring:beans/>
+
+    <custom-transformer name="ExceptionProcessor" class="com.mulesoft.demo.muledemoexceptionhandling.ExceptionProcessor" returnClass="java.lang.Object"/>
+
+    <flow name="main">
+        <vm:inbound-endpoint path="in" exchange-pattern="request-response"/>
+
+        <logger level="DEBUG" message="Payload before CXF invocation is: #[payload:]"/>
+
+        <!-- Convert incoming input to string -->
+        <object-to-byte-array-transformer/>
+        <object-to-string-transformer/>
+
+        <!-- Store the original request in a session property -->
+        <message-properties-transformer scope="session">
+            <add-message-property key="originalRequest" value="#[payload:]"/>
+        </message-properties-transformer>
+
+        <!-- Testing with local Service -->
+        <http:outbound-endpoint host="localhost" port="8088" path="mockStockQuoteSoap" method="POST" exchange-pattern="request-response">
+            <cxf:jaxws-client clientClass="net.webservicex.StockQuote" operation="GetQuote" port="StockQuoteSoap" wsdlLocation="http://localhost:8088/mockStockQuoteSoap?wsdl"/>
+        </http:outbound-endpoint>
+
+        <logger level="DEBUG" message="Payload after CXF invocation is: #[payload:]"/>
+
+        <choice>
+            <when expression="payload=='SomeException'" evaluator="groovy">
+                <flow-ref name="CustomErrorHandler"/>
+            </when>
+            <otherwise>
+                <flow-ref name="SystemErrorHandler"/>
+            </otherwise>
+        </choice>
+
+        <default-exception-strategy>
+            <flow-ref name="SystemErrorHandler"/>
+        </default-exception-strategy>
+    </flow>
+
+    <flow name="CustomErrorHandler">
+        <!-- Extract original request from session property (Echo) -->
+        <expression-transformer>
+            <return-argument evaluator="header" expression="SESSION:originalRequest"/>
+        </expression-transformer>
+
+        <logger level="DEBUG" message="Session header originalMessage is: #[headers:*]"/>
+    </flow>
+
+    <flow name="SystemErrorHandler">
+        <logger level="ERROR" message="Exception payload (before) is: #[payload:]"/>
+        <transformer ref="ExceptionProcessor"/>
+        <logger level="ERROR" message="Exception payload (after) is: #[payload:]"/>
+    </flow>
+</mule>
