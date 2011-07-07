@@ -16,7 +16,7 @@
 
     <spring:beans/>
 
-    <custom-transformer name="ExceptionProcessor" class="com.mulesoft.demo.muledemoexceptionhandling.ExceptionProcessor" returnClass="java.lang.Object"/>
+    <custom-transformer name="ExceptionProcessor" class="com.mulesoft.mulecxfexceptionexample.ExceptionProcessor" returnClass="java.lang.Object"/>
 
     <flow name="main">
         <vm:inbound-endpoint path="in" exchange-pattern="request-response"/>
